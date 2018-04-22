@@ -1,2 +1,2 @@
-shop: shop.c 
-	gcc -o shop shop.c 
+shop: shop.c genTime.c checkout.c
+	gcc -o shop shop.c
