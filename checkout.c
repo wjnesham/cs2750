@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "clerks.c"
+
 #ifndef NULL
 #define NULL ((void *) 0)
 #endif
@@ -22,14 +24,17 @@
 struct customerQueue {
 	int pos;
         char * customer;
-	char * time_spent
-	char * time_arrived
+	char * time_spent;
+	char * time_arrived;
 };
+
+// prototype
+void printLane( struct customerQueue [] );
 
 char * clearAndCopy(char *dest, char* src, int cpySize) {
 	//printf("enter clearAndCopy \n");
 	memset(dest, 0, MAX_BUFFER_SIZE);
-	strncpy(dest, src, cpySize
+	strncpy(dest, src, cpySize);
 	//printf("exit clearAndCopy \n");
 	return dest;
 }
@@ -38,7 +43,7 @@ char * clearAndCopy(char *dest, char* src, int cpySize) {
 void checkoutLanes() {
 	int i = 0;
 
-	FILE * file = fopen("customers.txt", "r");
+	FILE * file = fopen("./customers", "r");
 	if (file==NULL) {
 		printf("no such file.");
 	return;
@@ -83,10 +88,41 @@ void checkoutLanes() {
 	}
 	fclose(file);
 
+	
+
 	for( i=0; i<MAX_CUSTOMER_SIZE; i++) {
 		//node not set with customer
 		if(lane[i].pos == 0) continue; 
-			printf("customer: %s time spent: %s arrived at: %s\n", lane[i].customer, lane[i].time_spent, lane[i].time_arrived);
+		
+		//printf("CUSTOMER: %s time spent: %s arrived at: %s\n", lane[i].customer, lane[i].time_spent, lane[i].time_arrived);
+	}
+	//simulate lanes 
+	printLane( lane);
+}
+
+void printLane( struct customerQueue allCusts[] ) {
+	int ttlCusts = 0;
+	int i, c;
+	queue * custs[10];
+	// create 10 lanes
+	for (i=0; i<10; i++) {	
+		custs[i] = q_create();
+	}
+	i=0;
+	while ( i != -1) {
+		for ( c=1; c < sizeof(allCusts); c++) {
+			printf("Customer %s entered line %d at %s.\n", allCusts[i].customer, c, allCusts[i].time_arrived);
+			
+			ttlCusts++;
+			
+			if( allCusts[i+1].pos == 0) {
+				i=-1;
+				printf("There are %d many customers.\n", ttlCusts);
+				break;
+			}
+			 if( c == 10) c=0;
+			i++;
+		}
 	}
 }
 
