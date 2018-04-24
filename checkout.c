@@ -25,7 +25,7 @@
 //
 struct customerQueue {
 	int pos;
-        char * customer;
+    char * customer;
 	char * time_spent;
 	char * time_arrived;
 };
@@ -64,7 +64,13 @@ void checkoutLanes() {
 		lane[i].pos = 0;
 	}
 
+	int offset = 0; // for when customer and/or line change width.
 	while (!feof(file)) {
+
+		if(c < 9)
+			offset = 0;
+		if(c == 9)
+			offset = 1;
 
 		memset(dat, 0, sizeof(dat));
 		//clear out any left over text
@@ -81,15 +87,16 @@ void checkoutLanes() {
 			printf("Time arrived %s\n", clearAndCopy(temp, dat+CUSTOMER_TIME_ARRIVED_POS, CUSTOMER_TIME_ARRIVED_WIDTH));
 		}
 
+		//offset reads
+
 		lane[c].pos = c+1;
 		clearAndCopy(lane[c].customer, dat+CUSTOMER_NUMBER_POS, CUSTOMER_NUMBER_WIDTH);
-		clearAndCopy(lane[c].time_spent, dat+CUSTOMER_TIME_SPENT_POS, CUSTOMER_TIME_SPENT_WIDTH);
-		clearAndCopy(lane[c].time_arrived, dat+CUSTOMER_TIME_ARRIVED_POS, CUSTOMER_TIME_ARRIVED_WIDTH);
+		clearAndCopy(lane[c].time_spent, dat+CUSTOMER_TIME_SPENT_POS+offset, CUSTOMER_TIME_SPENT_WIDTH);
+		clearAndCopy(lane[c].time_arrived, dat+CUSTOMER_TIME_ARRIVED_POS+offset, CUSTOMER_TIME_ARRIVED_WIDTH);
 		c++;
 
 	}
 	fclose(file);
-
 	
 
 	for( i=0; i<MAX_CUSTOMER_SIZE; i++) {
@@ -118,7 +125,7 @@ void printLane( struct customerQueue allCusts[] ) {
 			
 		if( allCusts[i+1].pos == 0) {
 			i=-1;
-			printf("There are %d many customers.\n", ttlCusts);
+			printf("There are %d customers.\n", ttlCusts);
 			break;
 		}
 		 if( c == 10) c=0;
@@ -130,6 +137,4 @@ void printLane( struct customerQueue allCusts[] ) {
 void bakery() {
 
 }
-
-
 
