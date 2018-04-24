@@ -109,20 +109,18 @@ void printLane( struct customerQueue allCusts[] ) {
 		custs[i] = q_create();
 	}
 	i=0;
-	while ( i != -1) {
-		for ( c=1; c < sizeof(allCusts); c++) {
-			printf("Customer %s entered line %d at %s.\n", allCusts[i].customer, c, allCusts[i].time_arrived);
+	for ( c=1; c <= 10; c++) {
+		printf("Customer %s entered line %d at %s.\n", allCusts[i].customer, c, allCusts[i].time_arrived);
+		
+		ttlCusts++;
 			
-			ttlCusts++;
-			
-			if( allCusts[i+1].pos == 0) {
-				i=-1;
-				printf("There are %d many customers.\n", ttlCusts);
-				break;
-			}
-			 if( c == 10) c=0;
-			i++;
+		if( allCusts[i+1].pos == 0) {
+			i=-1;
+			printf("There are %d many customers.\n", ttlCusts);
+			break;
 		}
+		 if( c == 10) c=0;
+		i++;
 	}
 }
 
