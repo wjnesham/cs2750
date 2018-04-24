@@ -1,6 +1,10 @@
+#include <time.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
-#include "genTime.c"
-#include "checkout.c"
+#include "queue.h"
+
+
 
 int main () {
 	srand(time(0));

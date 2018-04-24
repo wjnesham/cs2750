@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "queue.h"
 
-#include "clerks.c"
 
 #ifndef NULL
 #define NULL ((void *) 0)
