@@ -9,13 +9,13 @@
 int main () {
 	srand(time(0));
 
-	int customers = 0;
+	int customersCount = 0;
 	//5 to 31 customers
-	customers = (rand() % 10) + 5;
+	customersCount = (rand() % 10) + 5;
 
-	timeSpent( customers );
+	timeSpent( customersCount );
 
-	checkoutLanes();
+	checkoutLanes(customersCount);
 		
 	return 0;
 }

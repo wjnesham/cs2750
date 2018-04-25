@@ -1,4 +1,4 @@
-/**Comment**/
+/**William Nesham**/
 
 #include <time.h>
 #include <stdlib.h>
@@ -20,10 +20,11 @@
 #define CUSTOMER_NUMBER_WIDTH 2
 #define CUSTOMER_TIME_SPENT_WIDTH 3
 #define CUSTOMER_TIME_ARRIVED_WIDTH 5
+#define LANES 10
 
 // functions to generate report.
 //
-struct customerQueue {
+struct customer {
 	int pos;
     char * customer;
 	char * time_spent;
@@ -31,7 +32,7 @@ struct customerQueue {
 };
 
 // prototype
-void printLane( struct customerQueue [] );
+void printLane( struct customer [], int recordCount );
 
 char * clearAndCopy(char *dest, char* src, int cpySize) {
 	//printf("enter clearAndCopy \n");
@@ -42,9 +43,8 @@ char * clearAndCopy(char *dest, char* src, int cpySize) {
 }
 
 //Simulation with 10 lines.
-void checkoutLanes() {
+void checkoutLanes(int customersCount) {
 	int i = 0;
-
 	FILE * file = fopen("./customers", "r");
 	if (file==NULL) {
 		printf("no such file.");
@@ -53,15 +53,15 @@ void checkoutLanes() {
 
 	int c = 0;
 	char dat[MAX_BUFFER_SIZE];
-	struct customerQueue lane[MAX_CUSTOMER_SIZE+1];
+	struct customer custArray[MAX_CUSTOMER_SIZE+1];
 	char temp[MAX_BUFFER_SIZE];
 
 	//initialize struct array
-	for( i=0; i < MAX_CUSTOMER_SIZE; i++) {
-		lane[i].customer = (char *) malloc(MAX_BUFFER_SIZE);
-		lane[i].time_spent = (char *) malloc(MAX_BUFFER_SIZE);
-		lane[i].time_arrived = (char *) malloc(MAX_BUFFER_SIZE);
-		lane[i].pos = 0;
+	for( i=0; i < customersCount; i++) {
+		custArray[i].customer = (char *) malloc(MAX_BUFFER_SIZE);
+		custArray[i].time_spent = (char *) malloc(MAX_BUFFER_SIZE);
+		custArray[i].time_arrived = (char *) malloc(MAX_BUFFER_SIZE);
+		custArray[i].pos = 0;
 	}
 
 	int offset = 0; // for when customer and/or line change width.
@@ -79,58 +79,70 @@ void checkoutLanes() {
 		if(dat[1] == 0) continue;
 		//skip any extra cr/lf at end of line
 		if(c >= MAX_CUSTOMER_SIZE) break;
+
 		//file is bigger than array, avoid writing past array size
 
-		if(DEBUG == 1) {
-			printf("Customer %s\n", clearAndCopy(temp, dat+CUSTOMER_NUMBER_POS, CUSTOMER_NUMBER_WIDTH));
-			printf("Time spent %s\n", clearAndCopy(temp, dat+CUSTOMER_TIME_SPENT_POS, CUSTOMER_TIME_SPENT_WIDTH));
-			printf("Time arrived %s\n", clearAndCopy(temp, dat+CUSTOMER_TIME_ARRIVED_POS, CUSTOMER_TIME_ARRIVED_WIDTH));
-		}
+		//if(DEBUG == 1) {
+			//printf("Customer %s\n", clearAndCopy(temp, dat+CUSTOMER_NUMBER_POS, CUSTOMER_NUMBER_WIDTH));
+			//printf("Time spent %s\n", clearAndCopy(temp, dat+CUSTOMER_TIME_SPENT_POS, CUSTOMER_TIME_SPENT_WIDTH));
+			//printf("Time arrived %s\n", clearAndCopy(temp, dat+CUSTOMER_TIME_ARRIVED_POS, CUSTOMER_TIME_ARRIVED_WIDTH));
+		//}
 
 		//offset reads
 
-		lane[c].pos = c+1;
-		clearAndCopy(lane[c].customer, dat+CUSTOMER_NUMBER_POS, CUSTOMER_NUMBER_WIDTH);
-		clearAndCopy(lane[c].time_spent, dat+CUSTOMER_TIME_SPENT_POS+offset, CUSTOMER_TIME_SPENT_WIDTH);
-		clearAndCopy(lane[c].time_arrived, dat+CUSTOMER_TIME_ARRIVED_POS+offset, CUSTOMER_TIME_ARRIVED_WIDTH);
+		custArray[c].pos = c+1;
+		clearAndCopy(custArray[c].customer, dat+CUSTOMER_NUMBER_POS, CUSTOMER_NUMBER_WIDTH);
+		clearAndCopy(custArray[c].time_spent, dat+CUSTOMER_TIME_SPENT_POS+offset, CUSTOMER_TIME_SPENT_WIDTH);
+		clearAndCopy(custArray[c].time_arrived, dat+CUSTOMER_TIME_ARRIVED_POS+offset, CUSTOMER_TIME_ARRIVED_WIDTH);
 		c++;
 
 	}
 	fclose(file);
 	
 
-	for( i=0; i<MAX_CUSTOMER_SIZE; i++) {
-		//node not set with customer
-		if(lane[i].pos == 0) continue; 
-		
-		//printf("CUSTOMER: %s time spent: %s arrived at: %s\n", lane[i].customer, lane[i].time_spent, lane[i].time_arrived);
-	}
+//	for( i=0; i<MAX_CUSTOMER_SIZE; i++) {
+//		//node not set with customer
+//		if(custArray[i].pos == 0) continue;
+//
+//		//printf("CUSTOMER: %s time spent: %s arrived at: %s\n", lane[i].customer, lane[i].time_spent, lane[i].time_arrived);
+//	}
 	//simulate lanes 
-	printLane( lane);
+	printLane( custArray, customersCount);
+
+	return;
 }
 
-void printLane( struct customerQueue allCusts[] ) {
-	int ttlCusts = 0;
-	int i, c;
-	queue * custs[10];
+void processQueues(queue * customerQueue[]);
+void printLane( struct customer allCusts[], int customersCount ) {
+
+	int i;
+	queue * customerQueue[LANES];
 	// create 10 lanes
-	for (i=0; i<10; i++) {	
-		custs[i] = q_create();
+	for (i=0; i<LANES; i++) {
+		customerQueue[i] = q_create();
 	}
 	i=0;
-	for ( c=1; c <= 10; c++) {
-		printf("Customer %s entered line %d at %s.\n", allCusts[i].customer, c, allCusts[i].time_arrived);
-		
-		ttlCusts++;
-			
-		if( allCusts[i+1].pos == 0) {
-			i=-1;
-			printf("There are %d customers.\n", ttlCusts);
-			break;
-		}
-		 if( c == 10) c=0;
+	for (int c=0; c < customersCount; c++) {
+		printf("Customer %s entered line %d at %s.\n", allCusts[c].customer, i, allCusts[c].time_arrived);
+		q_enqueue(customerQueue[i], &allCusts[c]);
 		i++;
+		if(i == LANES) i=0;
 	}
+
+	processQueues(customerQueue);
+}
+
+void processQueues(queue * customerQueue[]) {
+	struct customer* cust;
+	int i;
+	for (i=0; i<LANES; i++) {
+		while( q_isempty(customerQueue[i]) == 0) {
+			cust = (struct customer*)q_dequeue(customerQueue[i]);
+			printf("Customer %s left line.\n", cust->customer);
+		}
+
+	}
+
 }
 
 //Simulation with only one line

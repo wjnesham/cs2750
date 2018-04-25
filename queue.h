@@ -6,7 +6,7 @@
  */
 
 void timeSpent (int i);
-void checkoutLanes();
+void checkoutLanes(int customersCount);
 
 typedef void *qelem_t;
 
