@@ -2,7 +2,7 @@
 #include "queue.h"
 
 
-queue *q_create()
+queue *createLane()
 {
         queue *q = malloc(sizeof(*q));
         if (!q)
@@ -18,7 +18,7 @@ int q_destroy(queue *q)
                 return 0;
 	// ?
         while (!q_isempty(q))
-                q_dequeue(q);// ??
+                dequeue_cust(q);// ??
         free(q);
         return 1;
 }
@@ -53,8 +53,9 @@ int q_enqueue(queue *q, qelem_t elem)
                 q->front = new;
         return 1;
 }
- 
-qelem_t q_dequeue(queue *q)
+
+//Remove customer.
+qelem_t dequeue_cust(queue *q)
 {
         qnode *prev;
         qelem_t *elem;

@@ -26,7 +26,7 @@ typedef struct
 /*
  *  * Create an queue.
  *   */
-queue *q_create(void);
+queue *createLane(void);
 
 /*
  *  * Destroy an queue.
@@ -44,6 +44,6 @@ int q_isempty(queue *q);
 int q_enqueue(queue *q, qelem_t elem);
 
 // *  * Remove element from queue, and return it.
-qelem_t q_dequeue(queue *q);
+qelem_t dequeue_cust(queue *q);
 
 

@@ -48,7 +48,6 @@ void checkoutLanes(int customersCount) {
 	FILE * file = fopen("./customers", "r");
 	if (file==NULL) {
 		printf("no such file.");
-	return;
 	}
 
 	int c = 0;
@@ -80,13 +79,7 @@ void checkoutLanes(int customersCount) {
 		//skip any extra cr/lf at end of line
 		if(c >= MAX_CUSTOMER_SIZE) break;
 
-		//file is bigger than array, avoid writing past array size
 
-		//if(DEBUG == 1) {
-			//printf("Customer %s\n", clearAndCopy(temp, dat+CUSTOMER_NUMBER_POS, CUSTOMER_NUMBER_WIDTH));
-			//printf("Time spent %s\n", clearAndCopy(temp, dat+CUSTOMER_TIME_SPENT_POS, CUSTOMER_TIME_SPENT_WIDTH));
-			//printf("Time arrived %s\n", clearAndCopy(temp, dat+CUSTOMER_TIME_ARRIVED_POS, CUSTOMER_TIME_ARRIVED_WIDTH));
-		//}
 
 		//offset reads
 
@@ -100,12 +93,6 @@ void checkoutLanes(int customersCount) {
 	fclose(file);
 	
 
-//	for( i=0; i<MAX_CUSTOMER_SIZE; i++) {
-//		//node not set with customer
-//		if(custArray[i].pos == 0) continue;
-//
-//		//printf("CUSTOMER: %s time spent: %s arrived at: %s\n", lane[i].customer, lane[i].time_spent, lane[i].time_arrived);
-//	}
 	//simulate lanes 
 	printLane( custArray, customersCount);
 
@@ -119,7 +106,7 @@ void printLane( struct customer allCusts[], int customersCount ) {
 	queue * customerQueue[LANES];
 	// create 10 lanes
 	for (i=0; i<LANES; i++) {
-		customerQueue[i] = q_create();
+		customerQueue[i] = createLane();
 	}
 	i=0;
 	for (int c=0; c < customersCount; c++) {
@@ -137,7 +124,7 @@ void processQueues(queue * customerQueue[]) {
 	int i;
 	for (i=0; i<LANES; i++) {
 		while( q_isempty(customerQueue[i]) == 0) {
-			cust = (struct customer*)q_dequeue(customerQueue[i]);
+			cust = (struct customer*)dequeue_cust(customerQueue[i]);
 			printf("Customer %s left line.\n", cust->customer);
 		}
 
@@ -146,7 +133,57 @@ void processQueues(queue * customerQueue[]) {
 }
 
 //Simulation with only one line
-void bakery() {
+void bakery( int customersCount ) {
+	int i = 0;
+		FILE * file = fopen("./customers", "r");
+		if (file==NULL) {
+			printf("no such file.");
+		}
 
+		int c = 0;
+			char dat[MAX_BUFFER_SIZE];
+			struct customer custArray[MAX_CUSTOMER_SIZE+1];
+			char temp[MAX_BUFFER_SIZE];
+
+			//initialize struct array
+			for( i=0; i < customersCount; i++) {
+				custArray[i].customer = (char *) malloc(MAX_BUFFER_SIZE);
+				custArray[i].time_spent = (char *) malloc(MAX_BUFFER_SIZE);
+				custArray[i].time_arrived = (char *) malloc(MAX_BUFFER_SIZE);
+				custArray[i].pos = 0;
+			}
+
+			int offset = 0; // for when customer and/or line change width.
+			while (!feof(file)) {
+
+				if(c < 9)
+					offset = 0;
+				if(c == 9)
+					offset = 1;
+
+				memset(dat, 0, sizeof(dat));
+				//clear out any left over text
+				fgets(dat, sizeof(dat), file);
+
+				if(dat[1] == 0) continue;
+				//skip any extra cr/lf at end of line
+				if(c >= MAX_CUSTOMER_SIZE) break;
+
+
+
+				//offset reads
+
+				custArray[c].pos = c+1;
+				clearAndCopy(custArray[c].customer, dat+CUSTOMER_NUMBER_POS, CUSTOMER_NUMBER_WIDTH);
+				clearAndCopy(custArray[c].time_spent, dat+CUSTOMER_TIME_SPENT_POS+offset, CUSTOMER_TIME_SPENT_WIDTH);
+				clearAndCopy(custArray[c].time_arrived, dat+CUSTOMER_TIME_ARRIVED_POS+offset, CUSTOMER_TIME_ARRIVED_WIDTH);
+				c++;
+
+			}
+			fclose(file);
+
+	//print stuff
+
+	return;
 }
 

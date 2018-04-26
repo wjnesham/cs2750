@@ -24,7 +24,7 @@ void timeSpent (int i) {
 		//print to customer data file.
 		fprintf( file, "Customer: %d Time spent: %d Arrived at: %d Time left?\n", a+1, num, t);
 		
-		printf("Customer: %d Arrived at: %d \n", a+1, t);
+		//printf("Customer: %d Arrived at: %d \n", a+1, t);
 	}
 	fclose(file);
 }

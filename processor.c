@@ -57,7 +57,7 @@ void getBalance(FILE * file, int record_num, acct_info_t *record) {
     printf("Name: %s, Number: %d, Balance: %f\n", record->name, record->number, record->balance);
 }
 
-void FindAccount(int rec_num) {
+void findAccount(int rec_num) {
 	rec_num-=1; // To convert to index.
 
     acct_info_t *record = (acct_info_t *) malloc(sizeof(acct_info_t));
@@ -122,5 +122,5 @@ int main(int argc, char ** argv) {
         dec = dec * 10 + ( argv[1][i] - '0' );
     }
     //printf("'%d' passed string converted to int.\n", dec);
-    FindAccount(dec);
+    findAccount(dec);
 }
