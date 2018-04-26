@@ -6,7 +6,9 @@
  */
 
 void timeSpent (int i);
-void checkoutLanes(int customersCount);
+void grocery( int customersCount );
+void bakery( int customersCount );
+void loadCustomersFromFile(int customersCount);
 
 typedef void *qelem_t;
 
@@ -32,18 +34,18 @@ queue *createLane(void);
  *  * Destroy an queue.
  *   * Returns 1 on success, and otherwise 0.
  *    */
-int q_destroy(queue *q);
+int destroyLane(queue *q);
 
 
 //  * Check if queue is empty.
 // Returns 1 if the queue is empty, and otherwise 0.
-int q_isempty(queue *q);
+int isLaneEmpty(queue *q);
 
  //*  * Add element to queue.
  //*   * Returns 1 on success, and otherwise 0.
-int q_enqueue(queue *q, qelem_t elem);
+int enterLane(queue *q, qelem_t elem);
 
 // *  * Remove element from queue, and return it.
-qelem_t dequeue_cust(queue *q);
+qelem_t exitLane(queue *q);
 
 
